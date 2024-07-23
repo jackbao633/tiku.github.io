@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>题库系统</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .choices {
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>题库系统</h1>
+        <div id="question" class="question"></div>
+        <div id="choices" class="choices"></div>
+        <button id="next">下一题</button>
+    </div>
+    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = [
+                {
+                    question: "HTML是什么？",
+                    choices: ["A. 超文本传输协议", "B. 超文本标记语言", "C. 超文本应用程序", "D. 超文本链接"],
+                    answer: "B"
+                },
+                {
+                    question: "CSS是什么？",
+                    choices: ["A. 层叠样式表", "B. 层叠脚本表", "C. 层叠样式脚本", "D. 层叠样式语言"],
+                    answer: "A"
+                },
+                // 更多题目...
+            ];
+        
+            let currentQuestionIndex = 0;
+            let score = 0;
+        
+            function showQuestion() {
+                const question = questions[currentQuestionIndex];
+                document.getElementById('question').innerText = question.question;
+        
+                const choicesContainer = document.getElementById('choices');
+                choicesContainer.innerHTML = ''; // 清空选项
+        
+                question.choices.forEach(choice => {
+                    const label = document.createElement('label');
+                    label.innerText = choice + ' ';
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = 'choice';
+                    input.value = choice[0];
+                    label.appendChild(input);
+                    choicesContainer.appendChild(label);
+                });
+            }
+        
+            function checkAnswer() {
+                const selectedValue = document.querySelector('input[name="choice"]:checked').value;
+                const correctAnswer = questions[currentQuestionIndex].answer[0];
+                if (selectedValue === correctAnswer) {
+                    score++; // 正确答案，得分增加
+                }
+                return selectedValue === correctAnswer;
+            }
+        
+            document.getElementById('next').addEventListener('click', function() {
+                const isCorrect = checkAnswer();
+                if (!isCorrect) {
+                    // 如果答案错误，可以选择高亮显示正确答案
+                    document.querySelector(`input[value="${questions[currentQuestionIndex].answer[0]}"]`).style.borderColor = 'red';
+                } else {
+                    // 如果答案正确，移除之前可能设置的边框颜色
+                    document.querySelectorAll('input[name="choice"]').forEach(input => {
+                        input.style.borderColor = '';
+                    });
+                }
+        
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion();
+                } else {
+                    alert(`你已经完成了所有题目！得分：${score}/${questions.length}`);
+                }
+            });
+        
+            showQuestion();
+        });
+    </script>
+</body>
+
+</html>
